@@ -1,7 +1,9 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:motel/appTheme.dart';
 import 'package:motel/modules/login/forgotPassword.dart';
+import 'package:motel/network/blocs.dart';
 
 import '../../main.dart';
 
@@ -11,6 +13,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool isLoggingIn=false;
+  bool isCalledOnce=false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    flyLinebloc.loginResponse.stream.listen((data) => onLogginResult(data));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -80,6 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: TextField(
                               maxLines: 1,
                               onChanged: (String txt) {},
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
                               style: TextStyle(
                                 fontSize: 16,
                                 // color: AppTheme.dark_grey,
@@ -119,6 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Center(
                                 child: TextField(
                                   maxLines: 1,
+                                  controller: passwordController,
+                                  keyboardType: TextInputType.text,
                                   onChanged: (String txt) {},
                                   style: TextStyle(
                                     fontSize: 16,
@@ -168,7 +188,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8, top: 8),
-                        child: Container(
+                        child: 
+                          isLoggingIn ? 
+                            Container(
+                              margin: EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0, bottom: 30.0),
+                              child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(Colors.blueAccent
+                                    ),
+                                    strokeWidth: 3.0),
+                                height: 40.0,
+                                width: 40.0,):
+                        Container(
                           height: 48,
                           decoration: BoxDecoration(
                             color: AppTheme.getTheme().primaryColor,
@@ -181,24 +211,29 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(1)),
-                              highlightColor: Colors.transparent,
-                              onTap: () {
-                                // Navigator.pushAndRemoveUntil(context, Routes.SPLASH, (Route<dynamic> route) => false);
-                                Navigator.pushNamedAndRemoveUntil(context, Routes.TabScreen, (Route<dynamic> route) => false);
-                                // Navigator.pushReplacementNamed(context, Routes.TabScreen);
-                              },
-                              child: Center(
-                                child: Text(
-                                  "Login",
-                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                          child: 
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.all(Radius.circular(1)),
+                                highlightColor: Colors.transparent,
+                                onTap: () {
+                                  setState(() {
+                                    isLoggingIn = true;
+                                  });
+                                  isCalledOnce = true;
+                                  flyLinebloc.tryLogin(emailController.text.toString(), passwordController.text.toString());
+                                  // Navigator.pushAndRemoveUntil(context, Routes.SPLASH, (Route<dynamic> route) => false);
+                                  // Navigator.pushReplacementNamed(context, Routes.TabScreen);
+                                },
+                                child: Center(
+                                  child: Text(
+                                    "Login",
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                         ),
                       ),
                     ],
@@ -296,4 +331,36 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
+
+  onLogginResult(String data) async {
+    print (data);
+    if(isCalledOnce){
+
+      if(this.mounted) setState(() {
+        isLoggingIn = false;
+      });
+
+      if(data != ""){
+        Navigator.pushNamedAndRemoveUntil(context, Routes.TabScreen, (Route<dynamic> route) => false);
+
+      }else{
+
+        Flushbar(
+            icon : Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.blueAccent,
+            ),
+            messageText : Text("Credentials are incorrect.",
+                style: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 14.0 )
+            ),
+            duration : Duration(seconds: 3),
+            isDismissible : true
+        )..show(context);
+
+      }
+    }
+
+  }
+
 }
