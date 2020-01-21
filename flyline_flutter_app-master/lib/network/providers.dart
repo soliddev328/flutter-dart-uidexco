@@ -20,15 +20,16 @@ class FlyLineProvider {
     
     String credentials = email+":"+password;
     String encoded = base64Encode(utf8.encode(credentials));  
+    var auth = "Basic $encoded";
+    
+    dio.options.headers["Authorization"] = auth;
     
     try {
       response = await dio.post(
         url,
 
         options: Options(
-        headers: {
-          Headers.wwwAuthenticateHeader:"Token " + encoded,
-        },
+        
       ),
         data: json.encode({})
       );
