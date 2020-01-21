@@ -73,12 +73,10 @@ class _MyAppState extends State<MyApp> {
   var routes = <String, WidgetBuilder>{
     Routes.SPLASH: (BuildContext context) => IntroductionScreen(),
     Routes.TabScreen: (BuildContext context) => new BottomTabScreen(),
-    Routes.UserInfoScreen: (BuildContext context) => UserInfoScreen(),
   };
 }
 
 class Routes {
   static const String SPLASH = "/";
   static const String TabScreen = "/bottomTab/bottomTabScreen";
-  static const String UserInfoScreen = "/userInfoScreen";
 }

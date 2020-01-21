@@ -599,36 +599,36 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 color: Colors.white,
                 fontSize: 19.0 , fontWeight: FontWeight.bold)),
             onPressed: () {
-              $fly_from='city:DFW';
-              $fly_to='city:LAS';
-              $date_from='24%2F01%2F2020';
-              $date_to='24%2F01%2F2020';
-              $type='round';
-              $return_from='26%2F01%2F2020';
-              $return_to='26%2F01%2F2020';
-              $adults=1;
-              $infants=0;
-              $hildren=0;
-              $selected_cabins='M';
-              $curr='USD';
-              $url = 'http://staging.joinflyline.com/api/search/?' 
-                + 'fly_from=' + $fly_from 
-                + '&fly_to=' + $fly_to 
-                + '&date_from=' + $date_from 
-                + '&date_to=' +  $date_to 
-                + '&type=' +   $type 
-                + '&return_from=' +   $return_from 
-                + '&return_to=' +  $return_to 
-                + '&adults=' +  $adults 
-                + '&infants=' +  $infants 
-                + '&children=' +  $hildren 
-                + '&selected_cabins=' +  $selected_cabins
-                + '&curr=' +  $curr;
-              HttpClient()
-                .getUrl(Uri.parse($url)) // produces a request object
-                .then((request) => request.close()) // sends the request
-                .then((response) =>
-                  response.transform(Utf8Decoder()).listen(print)); // transforms and prints the response
+            //   $fly_from='city:DFW';
+            //   $fly_to='city:LAS';
+            //   $date_from='24%2F01%2F2020';
+            //   $date_to='24%2F01%2F2020';
+            //   $type='round';
+            //   $return_from='26%2F01%2F2020';
+            //   $return_to='26%2F01%2F2020';
+            //   $adults=1;
+            //   $infants=0;
+            //   $hildren=0;
+            //   $selected_cabins='M';
+            //   $curr='USD';
+            //   $url = 'http://staging.joinflyline.com/api/search/?' 
+            //     + 'fly_from=' + $fly_from 
+            //     + '&fly_to=' + $fly_to 
+            //     + '&date_from=' + $date_from 
+            //     + '&date_to=' +  $date_to 
+            //     + '&type=' +   $type 
+            //     + '&return_from=' +   $return_from 
+            //     + '&return_to=' +  $return_to 
+            //     + '&adults=' +  $adults 
+            //     + '&infants=' +  $infants 
+            //     + '&children=' +  $hildren 
+            //     + '&selected_cabins=' +  $selected_cabins
+            //     + '&curr=' +  $curr;
+            //   HttpClient()
+            //     .getUrl(Uri.parse($url)) // produces a request object
+            //     .then((request) => request.close()) // sends the request
+            //     .then((response) =>
+            //       response.transform(Utf8Decoder()).listen(print)); // transforms and prints the response
             },
           ),
         ],
