@@ -27,7 +27,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: appBar(),
               ),
               Expanded(
@@ -60,10 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(1.0),
-                        
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                        padding: const EdgeInsets.only(
+                            left: 24, right: 24, bottom: 16),
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppTheme.getTheme().backgroundColor,
@@ -92,7 +93,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     errorText: null,
                                     border: InputBorder.none,
                                     hintText: "Home Airport",
-                                    hintStyle: TextStyle(color: AppTheme.getTheme().disabledColor),
+                                    hintStyle: TextStyle(
+                                        color:
+                                            AppTheme.getTheme().disabledColor),
                                   ),
                                 ),
                               ),
@@ -101,7 +104,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                        padding: const EdgeInsets.only(
+                            left: 24, right: 24, bottom: 16),
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppTheme.getTheme().backgroundColor,
@@ -130,7 +134,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     errorText: null,
                                     border: InputBorder.none,
                                     hintText: "Email Address",
-                                    hintStyle: TextStyle(color: AppTheme.getTheme().disabledColor),
+                                    hintStyle: TextStyle(
+                                        color:
+                                            AppTheme.getTheme().disabledColor),
                                   ),
                                 ),
                               ),
@@ -168,7 +174,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     errorText: null,
                                     border: InputBorder.none,
                                     hintText: "Password",
-                                    hintStyle: TextStyle(color: AppTheme.getTheme().disabledColor),
+                                    hintStyle: TextStyle(
+                                        color:
+                                            AppTheme.getTheme().disabledColor),
                                   ),
                                 ),
                               ),
@@ -176,10 +184,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                       ),
-                      
-                      
                       Padding(
-                        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8, top: 24),
+                        padding: const EdgeInsets.only(
+                            left: 24, right: 24, bottom: 8, top: 24),
                         child: Container(
                           height: 48,
                           decoration: BoxDecoration(
@@ -196,15 +203,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.all(Radius.circular(24.0)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24.0)),
                               highlightColor: Colors.transparent,
                               onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(context, Routes.TabScreen, (Route<dynamic> route) => false);
+                                // Navigator.pushNamedAndRemoveUntil(
+                                //     context,
+                                //     Routes.TabScreen,
+                                //     (Route<dynamic> route) => false);
+                                Navigator.pushNamed(context, '/userInfoScreen');
                               },
                               child: Center(
                                 child: Text(
-                                  "Start 14 Day Free Trial",
-                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                  "Continue",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -241,7 +256,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()),
                               );
                             },
                             child: Padding(
@@ -275,8 +291,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget getFTButton({bool isFacebook: true}) {
     return Container(
       height: 4,
-      
-      
     );
   }
 
