@@ -622,8 +622,8 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 + '&adults=' +  $adults 
                 + '&infants=' +  $infants 
                 + '&hildren=' +  $hildren 
-                + '&selected_cabins=' +  $selected_cabins='M'
-                + '&curr=' +  $curr='USD';
+                + '&selected_cabins=' +  $selected_cabins
+                + '&curr=' +  $curr;
               HttpClient()
                 .getUrl(Uri.parse($url)) // produces a request object
                 .then((request) => request.close()) // sends the request
