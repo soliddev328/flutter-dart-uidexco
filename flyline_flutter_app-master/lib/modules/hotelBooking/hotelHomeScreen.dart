@@ -621,7 +621,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 + '&return_to=' +  $return_to 
                 + '&adults=' +  $adults 
                 + '&infants=' +  $infants 
-                + '&hildren=' +  $hildren 
+                + '&children=' +  $hildren 
                 + '&selected_cabins=' +  $selected_cabins
                 + '&curr=' +  $curr;
               HttpClient()
