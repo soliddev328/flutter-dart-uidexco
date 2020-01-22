@@ -10,6 +10,25 @@ class FlyLineProvider {
 
   final baseUrl = "https://staging.joinflyline.com";
   
+  Future <String> getAuthToken() async {
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token') ?? "";
+
+    if(token.isNotEmpty) return token;
+    else{
+        var email = prefs.getString('email') ?? "";
+        var password = prefs.getString('password') ?? "";
+
+        if (email.isNotEmpty && password.isNotEmpty){
+
+          return await login(email, password);
+
+        }else return "logout";
+    }
+    
+  }
+
   Future<String> login(email, password) async {
     var url = "$baseUrl/api/auth/login/";
     var result = "";
@@ -40,6 +59,9 @@ class FlyLineProvider {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('token', response.data["token"]);
 
+      prefs.setString('user_email', email);
+      prefs.setString('user_password', password);
+
     } else {
       result = "";
     }
@@ -48,8 +70,7 @@ class FlyLineProvider {
   
   Future<List<LocationObject>> locationQuery(term) async {
     
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token') ?? "";
+   var token = getAuthToken();
 
     Response response;
     Dio dio =  Dio();
@@ -62,8 +83,8 @@ class FlyLineProvider {
       } catch (e) {
         log(e.toString());
       }
-
-    if(response != null && response.statusCode == 200) {
+    
+    if(response.statusCode == 200) {
       
       for (dynamic i in response.data["locations"]) {
         locations.add(LocationObject.fromJson(i));
@@ -71,5 +92,6 @@ class FlyLineProvider {
     }
     return locations;
   }
+
 
 }
