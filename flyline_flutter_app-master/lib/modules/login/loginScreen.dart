@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  
   bool isLoggingIn=false;
   bool isCalledOnce=false;
 
@@ -24,6 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
+    passwordController.text = "Mgoblue16!";
+    emailController.text = "zach@joinflyline.com";
+    
     flyLinebloc.loginResponse.stream.listen((data) => onLogginResult(data));
   }
 

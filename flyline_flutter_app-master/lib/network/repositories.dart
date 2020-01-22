@@ -1,3 +1,4 @@
+import 'package:motel/models/flightInformation.dart';
 import 'package:motel/models/locations.dart';
 
 import 'providers.dart';
@@ -14,6 +15,10 @@ class FlyLineRepository {
 
   Future<List<LocationObject>> locationQuery(term){
     return _flyLineProvider.locationQuery(term);
+  }
+
+  Future<List<FlightInformationObject>> searchFlights(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr){
+    return _flyLineProvider.searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr);
   }
 
 }

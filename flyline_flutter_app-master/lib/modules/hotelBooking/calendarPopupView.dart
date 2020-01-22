@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import '../../appTheme.dart';
 import 'customCalendar.dart';
 
@@ -105,7 +105,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView> with TickerProvid
                                         height: 4,
                                       ),
                                       Text(
-                                        startDate != null ? DateFormat("EEE, dd MMM").format(startDate) : "--/-- ",
+                                        startDate != null ? intl.DateFormat("EEE, dd MMM").format(startDate) : "--/-- ",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
@@ -132,7 +132,7 @@ class _CalendarPopupViewState extends State<CalendarPopupView> with TickerProvid
                                         height: 4,
                                       ),
                                       Text(
-                                        endDate != null ? DateFormat("EEE, dd MMM").format(endDate) : "--/-- ",
+                                        endDate != null ? intl.DateFormat("EEE, dd MMM").format(endDate) : "--/-- ",
                                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                       ),
                                     ],

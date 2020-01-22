@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:motel/appTheme.dart';
 
 class CustomCalendarView extends StatefulWidget {
@@ -98,7 +98,7 @@ class _CustomCalendarViewState extends State<CustomCalendarView> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      DateFormat("MMMM, yyyy").format(currentMonthDate),
+                      intl.DateFormat("MMMM, yyyy").format(currentMonthDate),
                       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20, color: AppTheme.getTheme().disabledColor.withOpacity(1.0)),
                     ),
                   ),
@@ -159,7 +159,7 @@ class _CustomCalendarViewState extends State<CustomCalendarView> {
         Expanded(
           child: Center(
             child: Text(
-              DateFormat("EEE").format(dateList[i]),
+              intl.DateFormat("EEE").format(dateList[i]),
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.getTheme().primaryColor),
             ),
           ),

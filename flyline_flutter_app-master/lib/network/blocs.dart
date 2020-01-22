@@ -1,3 +1,4 @@
+import 'package:motel/models/flightInformation.dart';
 import 'package:motel/models/locations.dart';
 
 import 'repositories.dart';
@@ -11,6 +12,9 @@ class FlyLineBloc {
 
   final BehaviorSubject<List<LocationObject>> _subjectlocationItems =
   BehaviorSubject<List<LocationObject>>();
+
+  final BehaviorSubject<List<FlightInformationObject>> _subjectFlightItems =
+  BehaviorSubject<List<FlightInformationObject>>();
 
 
 
@@ -26,10 +30,18 @@ class FlyLineBloc {
     return response;
   }
 
+  Future<List<FlightInformationObject>> searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr) async {
+    List <FlightInformationObject> response = await _repository.searchFlights(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr);
+    
+    _subjectFlightItems.sink.add(response);
+    return response;
+  }
+
 
   dispose() {
     _token.close();
     _subjectlocationItems.close();
+    _subjectFlightItems.close();
   }
 
   
@@ -37,6 +49,9 @@ class FlyLineBloc {
   BehaviorSubject<String> get loginResponse => _token;
 
   BehaviorSubject<List<LocationObject>> get locationItems => _subjectlocationItems;
+
+
+  BehaviorSubject<List<FlightInformationObject>> get flightsItems => _subjectFlightItems;
 
   
 

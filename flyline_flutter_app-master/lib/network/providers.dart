@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:motel/models/flightInformation.dart';
 import 'package:motel/models/locations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,8 +71,8 @@ class FlyLineProvider {
   
   Future<List<LocationObject>> locationQuery(term) async {
     
-   var token = getAuthToken();
-
+   var token = await getAuthToken();
+    
     Response response;
     Dio dio =  Dio();
     dio.options.headers["Authorization"] = "Token $token";
@@ -91,6 +92,32 @@ class FlyLineProvider {
         }
     }
     return locations;
+  }
+
+  Future<List<FlightInformationObject>> searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr) async {
+    
+   var token = await getAuthToken();
+
+    Response response;
+    Dio dio =  Dio();
+    dio.options.headers["Authorization"] = "Token $token";
+
+    List<FlightInformationObject> flights = List<FlightInformationObject>();
+    var url ="$baseUrl/api/search/?fly_from=$flyFrom&fly_to=$flyTo&date_from=$dateFrom&date_to=$dateTo&type=$type&return_from=$returnFrom&return_to=$returnTo&adults=$adults&infants=$infants&children=$children&selected_cabins=$selectedCabins&curr=USD";
+  
+    try {
+        response = await dio.get(url);
+      } catch (e) {
+        log(e.toString());
+      }
+    
+    if(response.statusCode == 200) {
+      
+      for (dynamic i in response.data["data"]) {
+        flights.add(FlightInformationObject.fromJson(i));
+        }
+    }
+    return flights;
   }
 
 

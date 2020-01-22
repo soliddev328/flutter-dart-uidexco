@@ -3,22 +3,20 @@ import 'dart:ui';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:motel/appTheme.dart';
+import 'package:motel/models/flightInformation.dart';
 import 'package:motel/models/hotelListData.dart';
 import 'package:motel/models/locations.dart';
 import 'package:motel/modules/hotelBooking/calendarPopupView.dart';
 import 'package:motel/modules/hotelBooking/roomPopupView.dart';
-import 'package:motel/modules/hotelDetailes/roomBookingScreen.dart';
-import 'package:motel/modules/hotelDetailes/searchScreen.dart';
 import 'package:motel/modules/myTrips/upcomingListView.dart';
 import 'package:motel/network/blocs.dart';
+import 'package:select_dialog/select_dialog.dart';
 import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'filtersScreen.dart';
-// coded by Victor
-import 'dart:io';
-import 'dart:convert';
+import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 
 class HotelHomeScreen extends StatefulWidget {
   @override
@@ -37,10 +35,22 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
   bool isMap = false;
 
 
-  List<LocationObject> departureLocations = List<LocationObject>();
+  final formatDates = intl.DateFormat("dd MMM");
+  final formatTime = intl.DateFormat("HH : m a");
+  final formatAllDay = intl.DateFormat("dd/MM/yyyy");
+
+
+  var typeOfTripSelected = 0;
   LocationObject selectedDeparture;
-  List<LocationObject> arrivalLocations = List<LocationObject>();
   LocationObject selectedArrival;
+
+  var departureDate = DateTime.now();
+  var returnDate = DateTime.now().add(Duration(days:2));
+  static var classOfServicesList = ["Economy", "Premium Economy", "Business", "First Class"];
+  static var classOfServicesValueList = ["M", "W", "C", "F"];
+  
+  var selectedClassOfService = classOfServicesList[0];
+  var selectedClassOfServiceValue = classOfServicesValueList[0];
 
   final searchBarHieght = 158.0;
   final filterBarHieght = 52.0;
@@ -49,7 +59,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
   @override
   void initState() {
-
 
 
     animationController = AnimationController(duration: Duration(milliseconds: 1000), vsync: this);
@@ -144,8 +153,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                         ),
                       )
                     : Expanded(
-                        child: SingleChildScrollView(
-                                  child: Column(
+                        child: Column(
                                       children: <Widget>[
                                         Container(
                                           color: AppTheme.getTheme().scaffoldBackgroundColor,
@@ -162,7 +170,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                         getFlightDetails(),
                                       ]
                                   ),
-                        )
+                      
                       )
               ],
             ),
@@ -302,312 +310,349 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
   Widget getFlightDetails(){
     return Container(
-          margin: EdgeInsets.only(left: 16, right: 16, top : 10),
-          decoration: BoxDecoration(
-                  color: AppTheme.getTheme().backgroundColor,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(color: AppTheme.getTheme().dividerColor, offset: Offset(0, 2), blurRadius: 8.0),
-                  ],
-                ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
+      child: StreamBuilder<List<FlightInformationObject>>(
+          stream: flyLinebloc.flightsItems.stream,
+          builder: (context, AsyncSnapshot <List<FlightInformationObject>> snapshot) {
+            
+            if(snapshot.data!=null && snapshot.data.isNotEmpty) {
 
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
+              var list_of_flights = snapshot.data;
+              
+              return Expanded(
+                  child: Container(
+                  child: AnimatedContainer(
+                duration: Duration(microseconds: 200),
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  scrollDirection: Axis.vertical,
+                  itemCount: list_of_flights.length,
 
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(                   
-                                          padding: EdgeInsets.only(left: 16.0 , top :14, bottom : 14),
-                                          width: MediaQuery.of(context).size.width/2,
-                                            child: Text("10 Feb | Departure",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600
-                                              ),
-                                            ),
-                                          ),
+                  itemBuilder: (context, index) {
+                    var flight = list_of_flights[index];
 
-                                        
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.only(left:20, top:6),
-                                              child: Container(
-                                                width: 1,
-                                                height: 120,
-                                                color: Colors.grey.withOpacity(1),
-                                              ),
-                                            ),
+                    print(flight.routes);
+                    
+                    return Container(
+                      margin: EdgeInsets.only(left: 16, right: 16, top : 10),
+                      decoration: BoxDecoration(
+                              color: AppTheme.getTheme().backgroundColor,
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(color: AppTheme.getTheme().dividerColor, offset: Offset(0, 2), blurRadius: 8.0),
+                              ],
+                            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: <Widget>[
 
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Container(                   
-                                                  padding: EdgeInsets.only(left:10, top:5, bottom: 10),
-                                                  margin: EdgeInsets.only(bottom:8),
-                                                  width: MediaQuery.of(context).size.width/2,
-                                                    child: Text("6 : 15 AM Dallas (DAL)",
-                                                      textAlign: TextAlign.start,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w800
-                                                      ),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(                   
+                                                padding: EdgeInsets.only(left: 16.0 , top :14, bottom : 14),
+                                                width: MediaQuery.of(context).size.width/2,
+                                                  child: Text(formatDates.format(flight.localDeparture)+" | Departure",
+                                                    textAlign: TextAlign.start,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w600
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: EdgeInsets.only(left:20, top:6),
+                                                    child: Container(
+                                                      width: 1,
+                                                      height: 120,
+                                                      color: Colors.grey.withOpacity(1),
                                                     ),
                                                   ),
 
-                                                Row (
-                                                  children: <Widget>[
-                                                    Container(     
-                                                      margin: EdgeInsets.only(left: 10),
-                                                      padding: EdgeInsets.only(top:3, bottom:3, left:5, right: 5),
-                                                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                                        child: Text("7h 15m",
-                                                          textAlign: TextAlign.start,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.lightBlue,
-                                                            fontWeight: FontWeight.w800
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Container(                   
+                                                        padding: EdgeInsets.only(left:10, top:5, bottom: 10),
+                                                        margin: EdgeInsets.only(bottom:8),
+                                                        width: MediaQuery.of(context).size.width/2,
+                                                          child: Text(formatTime.format(flight.routes[0].localDeparture)+" "+ flight.routes[0].flyFrom+" ("+ flight.routes[0].cityFrom +")",
+                                                            textAlign: TextAlign.start,
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w800
+                                                            ),
                                                           ),
                                                         ),
+
+                                                      Row (
+                                                        children: <Widget>[
+                                                          Container(     
+                                                            margin: EdgeInsets.only(left: 10),
+                                                            padding: EdgeInsets.only(top:3, bottom:3, left:5, right: 5),
+                                                            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                                              child: Text(flight.durationDeparture,
+                                                                textAlign: TextAlign.start,
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.lightBlue,
+                                                                  fontWeight: FontWeight.w800
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                          Container(
+                                                            margin: EdgeInsets.only(left : 10, right: 5),
+                                                            child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+
+                                                          Container(
+                                                            margin: EdgeInsets.only(left : 5, right: 5),
+                                                            child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                          
+                                                          
+                                                          // Container(     
+                                                          //   margin: EdgeInsets.only(left: 5),              
+                                                          //   padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
+                                                          //   decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                                          //     child: Text("1 Stopover",
+                                                          //       textAlign: TextAlign.start,
+                                                          //       style: TextStyle(
+                                                          //         fontSize: 14,
+                                                          //         color: Colors.lightBlue,
+                                                          //         fontWeight: FontWeight.w800
+                                                          //       ),
+                                                          //     ),
+                                                          //   ),
+
+                                                        ],
                                                       ),
 
-                                                    Container(
-                                                      margin: EdgeInsets.only(left : 10, right: 5),
-                                                      child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                      Container(     
+                                                            margin: EdgeInsets.only(left: 10, top : 10),              
+                                                            padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
+                                                            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                                              child: Text(selectedClassOfService,
+                                                                textAlign: TextAlign.start,
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.lightBlue,
+                                                                  fontWeight: FontWeight.w800
+                                                                ),
+                                                              ),
+                                                            ),
 
-                                                    Container(
-                                                      margin: EdgeInsets.only(left : 5, right: 5),
-                                                      child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
-                                                    
-                                                    
-                                                    Container(     
-                                                      margin: EdgeInsets.only(left: 5),              
-                                                      padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
-                                                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                                        child: Text("1 Stopover",
-                                                          textAlign: TextAlign.start,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.lightBlue,
-                                                            fontWeight: FontWeight.w800
+
+                                                    Container(                   
+                                                        padding: EdgeInsets.only(left:10, top:20),
+                                                        margin: EdgeInsets.only(bottom:3),
+                                                        width: MediaQuery.of(context).size.width/2,
+                                                          child: Text(formatTime.format(flight.routes[0].localArrival)+" "+ flight.routes[0].flyTo+" ("+ flight.routes[0].cityTo +")",
+                                                            textAlign: TextAlign.start,
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w800
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
+                                                        ),  
+                                                  ],)
 
-                                                  ],
+                                                  
+                                                ],
                                                 ),
 
-                                                Container(     
-                                                      margin: EdgeInsets.only(left: 10, top : 10),              
-                                                      padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
-                                                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                                        child: Text("Economy",
-                                                          textAlign: TextAlign.start,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.lightBlue,
-                                                            fontWeight: FontWeight.w800
-                                                          ),
-                                                        ),
-                                                      ),
+                                              
+                                              
+                                            ],
+                                          ),
+                          
+                                        ],
+                                      ),
+                                      ),
+                      
+                      Container(        
+                        
+                        padding: EdgeInsets.only(left:16, top : 20, bottom: 10),
+                        
+                        width: MediaQuery.of(context).size.width/2,
+                          child: Text(flight.nightsInDest.toString()+" nights in "+flight.cityTo,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600
+                              ),
+                          ),
+                        ), 
+                      flight.routes.length>1 ? Container(
+                                      
+                          child: Row(
+                            children: <Widget>[
 
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(                   
+                                    padding: EdgeInsets.only(left: 16.0, top :14, bottom : 14),
+                                    width: MediaQuery.of(context).size.width/2,
+                                      child: Text(formatDates.format(startDate)+" | Return",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600
+                                        ),
+                                      ),
+                                    ),
 
-                                              Container(                   
-                                                  padding: EdgeInsets.only(left:10, top:20),
-                                                  margin: EdgeInsets.only(bottom:3),
-                                                  width: MediaQuery.of(context).size.width/2,
-                                                    child: Text("3 : 30 PM ARUBA (AUA)",
-                                                      textAlign: TextAlign.start,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w800
-                                                      ),
+                                  
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left:20, top:6),
+                                        child: Container(
+                                          width: 1,
+                                          height: 120,
+                                          color: Colors.grey.withOpacity(0.8),
+                                        ),
+                                      ),
+
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(                   
+                                            padding: EdgeInsets.only(left:10, top:5, bottom: 10),
+                                            margin: EdgeInsets.only(bottom:8),
+                                            width: MediaQuery.of(context).size.width/2,
+                                              child: Text(formatTime.format(flight.routes[1].localDeparture)+" "+ flight.routes[1].flyFrom+" ("+ flight.routes[1].cityFrom +")",
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800
+                                                ),
+                                              ),
+                                            ),
+
+                                          Row (
+                                            children: <Widget>[
+                                              Container(     
+                                                margin: EdgeInsets.only(left: 10),
+                                                padding: EdgeInsets.only(top:3, bottom:3, left:5, right: 5),
+                                                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                                  child: Text(flight.durationReturn,
+                                                    textAlign: TextAlign.start,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.lightBlue,
+                                                      fontWeight: FontWeight.w800
                                                     ),
-                                                  ),  
-                                            ],)
+                                                  ),
+                                                ),
 
-                                            
-                                          ],
+                                              Container(
+                                                margin: EdgeInsets.only(left : 10, right: 5),
+                                                child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+
+                                              Container(
+                                                margin: EdgeInsets.only(left : 5, right: 5),
+                                                child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                              
+                                              
+                                              // Container(     
+                                              //   margin: EdgeInsets.only(left: 5),              
+                                              //   padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
+                                              //   decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                              //     child: Text("1 Stopover",
+                                              //       textAlign: TextAlign.start,
+                                              //       style: TextStyle(
+                                              //         fontSize: 14,
+                                              //         color: Colors.lightBlue,
+                                              //         fontWeight: FontWeight.w800
+                                              //       ),
+                                              //     ),
+                                              //   ),
+
+                                            ],
                                           ),
 
-                                        
-                                        
-                                      ],
+                                          Container(     
+                                                margin: EdgeInsets.only(left: 10, top : 10),              
+                                                padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
+                                                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
+                                                  child: Text(selectedClassOfService,
+                                                    textAlign: TextAlign.start,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.lightBlue,
+                                                      fontWeight: FontWeight.w800
+                                                    ),
+                                                  ),
+                                                ),
+
+
+                                            Container(                   
+                                            padding: EdgeInsets.only(left:10, top:20),
+                                            margin: EdgeInsets.only(bottom:3),
+                                            width: MediaQuery.of(context).size.width/2,
+                                              child: Text(formatTime.format(flight.routes[1].localArrival)+" "+ flight.routes[1].flyTo+" ("+ flight.routes[1].cityTo +")",
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800
+                                                ),
+                                              ),
+                                            ),
+
+                                          
+                                      ],)
+
+                                      
+                                    ],
                                     ),
+
+                                  
+                                  
+                                ],
+                              ),
+
+
+
+
+                              
+                              
+                            ],
+                          ),
+                          ) : Container(),
                     
-                                  ],
-                                ),
-                                ),
+                    ],
+                  ),
                 
-                Container(        
-                  
-                  padding: EdgeInsets.only(left:16, top : 20, bottom: 10),
-                  
-                  width: MediaQuery.of(context).size.width/2,
-                    child: Text("10 nights in Aruba",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600
-                        ),
-                    ),
-                  ), 
-                 Container(
-                                
-                    child: Row(
-                      children: <Widget>[
+        );
+                  },
+                )
+                )
+                ),
+              );
 
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(                   
-                              padding: EdgeInsets.only(left: 16.0, top :14, bottom : 14),
-                              width: MediaQuery.of(context).size.width/2,
-                                child: Text("20 Feb | Return",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600
-                                  ),
-                                ),
-                              ),
+            }else{
+              return Container();
+            }
 
-                            
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left:20, top:6),
-                                  child: Container(
-                                    width: 1,
-                                    height: 120,
-                                    color: Colors.grey.withOpacity(0.8),
-                                  ),
-                                ),
-
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(                   
-                                      padding: EdgeInsets.only(left:10, top:5, bottom: 10),
-                                      margin: EdgeInsets.only(bottom:8),
-                                      width: MediaQuery.of(context).size.width/2,
-                                        child: Text("6 : 15 AM Dallas (DAL)",
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w800
-                                          ),
-                                        ),
-                                      ),
-
-                                    Row (
-                                      children: <Widget>[
-                                        Container(     
-                                          margin: EdgeInsets.only(left: 10),
-                                          padding: EdgeInsets.only(top:3, bottom:3, left:5, right: 5),
-                                          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                            child: Text("7h 15m",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.w800
-                                              ),
-                                            ),
-                                          ),
-
-                                        Container(
-                                          margin: EdgeInsets.only(left : 10, right: 5),
-                                          child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
-
-                                        Container(
-                                          margin: EdgeInsets.only(left : 5, right: 5),
-                                          child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
-                                        
-                                        
-                                        Container(     
-                                          margin: EdgeInsets.only(left: 5),              
-                                          padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
-                                          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                            child: Text("1 Stopover",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.w800
-                                              ),
-                                            ),
-                                          ),
-
-                                      ],
-                                    ),
-
-                                    Container(     
-                                          margin: EdgeInsets.only(left: 10, top : 10),              
-                                          padding: EdgeInsets.only(top:3, bottom: 3, left:5, right: 5),
-                                          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.6)),
-                                            child: Text("Economy",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.w800
-                                              ),
-                                            ),
-                                          ),
-
-
-                                      Container(                   
-                                      padding: EdgeInsets.only(left:10, top:20),
-                                      margin: EdgeInsets.only(bottom:3),
-                                      width: MediaQuery.of(context).size.width/2,
-                                        child: Text("3 : 30 PM ARUBA (AUA)",
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w800
-                                          ),
-                                        ),
-                                      ),
-
-                                    
-                                ],)
-
-                                
-                              ],
-                              ),
-
-                            
-                            
-                          ],
-                        ),
-
-
-
-
-                        
-                        
-                      ],
-                    ),
-                    ),
-              
-              ],
-            ),
-          
+          },
+      )
     );
+    
+    
   }
   
   Widget getSearchButton(){
@@ -622,36 +667,23 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 color: Colors.white,
                 fontSize: 19.0 , fontWeight: FontWeight.bold)),
             onPressed: () {
-              // $fly_from='city:DFW';
-              // $fly_to='city:LAS';
-              // $date_from='24%2F01%2F2020';
-              // $date_to='24%2F01%2F2020';
-              // $type='round';
-              // $return_from='26%2F01%2F2020';
-              // $return_to='26%2F01%2F2020';
-              // $adults=1;
-              // $infants=0;
-              // $hildren=0;
-              // $selected_cabins='M';
-              // $curr='USD';
-              // $url = 'http://staging.joinflyline.com/api/search/?' 
-              //   + 'fly_from=' + $fly_from 
-              //   + '&fly_to=' + $fly_to 
-              //   + '&date_from=' + $date_from 
-              //   + '&date_to=' +  $date_to 
-              //   + '&type=' +   $type 
-              //   + '&return_from=' +   $return_from 
-              //   + '&return_to=' +  $return_to 
-              //   + '&adults=' +  $adults 
-              //   + '&infants=' +  $infants 
-              //   + '&children=' +  $hildren 
-              //   + '&selected_cabins=' +  $selected_cabins
-              //   + '&curr=' +  $curr;
-              // HttpClient()
-              //   .getUrl(Uri.parse($url)) // produces a request object
-              //   .then((request) => request.close()) // sends the request
-              //   .then((response) =>
-              //     response.transform(Utf8Decoder()).listen(print)); // transforms and prints the response
+              try{
+                flyLinebloc.searchFlight(
+                  selectedDeparture.type+":"+selectedDeparture.code,
+                  selectedArrival.type+":"+selectedArrival.code, 
+                  formatAllDay.format(startDate),
+                  formatAllDay.format(startDate),
+                  typeOfTripSelected==0 ? "round" : "oneway",
+                  formatAllDay.format(endDate),
+                  formatAllDay.format(endDate),
+                  ad.toString(),
+                  "0",
+                  "0",
+                  selectedClassOfServiceValue,
+                  "USD");
+                  }catch (e){
+                    print(e);
+                  }
             },
           ),
         ],
@@ -660,6 +692,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
   }
 
   Widget getTimeDateUI() {
+
     return Padding(
       padding: const EdgeInsets.only(left: 18, bottom: 16),
       child: Row(
@@ -679,32 +712,62 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                     ),
                     onTap: () {
                       FocusScope.of(context).requestFocus(FocusNode());
-                      // setState(() {
-                      //   isDatePopupOpen = true;
-                      // });
+                      
                       showDemoDialog(context: context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Trip Dates",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            "${DateFormat("dd, MMM").format(startDate)} - ${DateFormat("dd, MMM").format(endDate)}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
+                      child: InkWell(
+                        onTap:() async {
+                          final List<DateTime> picked = await DateRangePicker.showDatePicker(
+                          context: context,
+                          initialFirstDate: new DateTime.now(),
+                          initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+                          firstDate: new DateTime(2000),
+                          lastDate: new DateTime.now().add(Duration(days: 365*2))
+                        );
+                        if (picked != null && picked.length == 2) {
+                            setState(() {
+                              startDate = picked[0];
+                              endDate = picked[1];
+                            });
+                        }else if (picked != null && picked.length == 2) {
+                          setState(() {
+                              startDate = picked[0];
+                            });
+                        }
+
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+
+                            Container(
+                              child: Text(
+                                typeOfTripSelected == 0 ? 
+                                "Trip Date(s)"
+                                : 
+                                "Trip Date",
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.grey),
+                              ),
                             ),
-                          ),
-                        ],
+
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              typeOfTripSelected == 0 ? 
+                                "${formatDates.format(startDate)} - ${formatDates.format(endDate)}"
+                                : 
+                                "${formatDates.format(startDate)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -822,25 +885,44 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Class of Service",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            "Basic Economy",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
+                      child: InkWell(
+                          onTap: (){
+                            SelectDialog.showModal<String>(
+                              context,
+                              searchBoxDecoration: InputDecoration(
+                                hintText: "Pick one"
+                              ),
+                              label: "Class of Service",
+                              selectedValue: selectedClassOfService,
+
+                              items: classOfServicesList,
+                              onChange: (String selected) {
+                                setState(() {
+                                  selectedClassOfService = selected;
+                                  selectedClassOfServiceValue = classOfServicesValueList[classOfServicesList.indexOf(selected)];
+                                });
+                              });
+                          },
+                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "Class of Service",
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.grey),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              selectedClassOfService,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -856,6 +938,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
   }
 
   Widget getSearchBarUI() {
+    
     return Column(
       children: <Widget>[
         Container(
@@ -870,24 +953,24 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Container(                   
-                          width: MediaQuery.of(context).size.width/4,
-                            child: TextField(
-                              textAlign: TextAlign.center,
-                              onChanged: (String txt) {},
-                              onTap: () {
-                              },
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600
-                              ),
-                              cursorColor: AppTheme.getTheme().primaryColor,
-                              decoration: new InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Round-Trip",
-                              ),
+                        InkWell(
+                          onTap: (){
+                                  setState(() {
+                                    typeOfTripSelected = 0;
+                                  });
+                                },
+                          child: Container(                   
+                            width: MediaQuery.of(context).size.width/4,
+                              child: Text("Round-Trip",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: (typeOfTripSelected == 0) ? Colors.black : Colors.grey,
+                                    fontWeight: (typeOfTripSelected == 0) ? FontWeight.w600 : FontWeight.w400
+                                  ),
+                                ),
                             ),
-                          ),
+                        ),
 
                         Padding(
                             padding: EdgeInsets.all(8),
@@ -899,28 +982,24 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                           ),
                             
 
-                        Container(                    
-                          width: MediaQuery.of(context).size.width/4,
-                            child: TextField(
+                        InkWell(
+                          onTap: (){
+                                  setState(() {
+                                    typeOfTripSelected = 1;
+                                  });
+                                },
+                          child: Container(                   
+                            width: MediaQuery.of(context).size.width/4,
+                              child: Text("One-Way",
                                   textAlign: TextAlign.center,
-                                  onChanged: (String txt) {},
-                                  onTap: () {
-                                    // FocusScope.of(context).requestFocus(FocusNode());
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => SearchScreen(), fullscreenDialog: true),
-                                    // );
-                                  },
                                   style: TextStyle(
                                     fontSize: 16,
+                                    color: (typeOfTripSelected == 1) ? Colors.black : Colors.grey,
+                                    fontWeight: (typeOfTripSelected == 1) ? FontWeight.w600 : FontWeight.w400
                                   ),
-                                  cursorColor: AppTheme.getTheme().primaryColor,
-                                  decoration: new InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "One way",
-                                  ),
+                                ),
                             ),
-                          ),
+                        ),
 
                           Padding(
                             padding: EdgeInsets.all(8),
@@ -952,17 +1031,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
 
                                 Container(
-                                  
                                   padding: EdgeInsets.only(top:0),
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     onChanged: (String txt) {},
                                     onTap: () {
-                                      // FocusScope.of(context).requestFocus(FocusNode());
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(builder: (context) => SearchScreen(), fullscreenDialog: true),
-                                      // );
                                     },
                                     style: TextStyle(
                                       fontSize: 16,
@@ -1009,7 +1082,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
             child: Container(                   
                   width: MediaQuery.of(context).size.width/4,
                   padding: EdgeInsets.only(left: 10),
-                    child: LocationSearchUI("Arrival", true, notifyParent: refreshDepartureValue),
+                    child: LocationSearchUI("Arrival", false, notifyParent: refreshDepartureValue),
                   ),
             ),
       
