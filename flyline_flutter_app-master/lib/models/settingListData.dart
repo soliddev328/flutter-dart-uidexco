@@ -29,31 +29,31 @@ class SettingsListData {
   }
 
   static List<SettingsListData> userSettingsList = [
-    SettingsListData(
-      titleTxt: 'Change password',
-      isSelected: false,
-      iconData: FontAwesomeIcons.lock,
-    ),
+    // SettingsListData(
+    //   titleTxt: 'Change password',
+    //   isSelected: false,
+    //   iconData: FontAwesomeIcons.lock,
+    // ),
     SettingsListData(
       titleTxt: 'Invite Friends',
       isSelected: false,
       iconData: FontAwesomeIcons.userFriends,
     ),
-    SettingsListData(
-      titleTxt: 'Credits & Coupons',
-      isSelected: false,
-      iconData: FontAwesomeIcons.gift,
-    ),
+    // SettingsListData(
+    //   titleTxt: 'Credits & Coupons',
+    //   isSelected: false,
+    //   iconData: FontAwesomeIcons.gift,
+    // ),
     SettingsListData(
       titleTxt: 'Help Center',
       isSelected: false,
       iconData: FontAwesomeIcons.infoCircle,
     ),
-    SettingsListData(
-      titleTxt: 'Payments',
-      isSelected: false,
-      iconData: FontAwesomeIcons.wallet,
-    ),
+    // SettingsListData(
+    //   titleTxt: 'Payments',
+    //   isSelected: false,
+    //   iconData: FontAwesomeIcons.wallet,
+    // ),
     SettingsListData(
       titleTxt: 'Settings',
       isSelected: false,
@@ -231,11 +231,13 @@ class SettingsListData {
   static List<SettingsListData> subHelpList = [
     SettingsListData(
       titleTxt: "",
-      subTxt: "You can cancel a reservation any time before Or during your trip. To cancel a reservation:",
+      subTxt:
+          "You can cancel a reservation any time before Or during your trip. To cancel a reservation:",
     ),
     SettingsListData(
       titleTxt: "",
-      subTxt: "GO to Trips and choose yotr trip\nClick Your home reservation\nClick Modify reservation",
+      subTxt:
+          "GO to Trips and choose yotr trip\nClick Your home reservation\nClick Modify reservation",
     ),
     SettingsListData(
       titleTxt: "",

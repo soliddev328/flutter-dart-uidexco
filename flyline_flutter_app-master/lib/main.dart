@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:motel/appTheme.dart';
+import 'package:motel/modules/login/userInfoScreen.dart';
 import 'package:motel/splashScreen.dart';
 
+import 'introductionScreen.dart';
 import 'modules/bottomTab/bottomTabScreen.dart';
 
 void main() async {
@@ -49,11 +51,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: AppTheme.isLightTheme ? Brightness.dark : Brightness.light,
-      statusBarBrightness: AppTheme.isLightTheme ? Brightness.light : Brightness.dark,
-      systemNavigationBarColor: AppTheme.isLightTheme ? Colors.white : Colors.black,
+      statusBarIconBrightness:
+          AppTheme.isLightTheme ? Brightness.dark : Brightness.light,
+      statusBarBrightness:
+          AppTheme.isLightTheme ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor:
+          AppTheme.isLightTheme ? Colors.white : Colors.black,
       systemNavigationBarDividerColor: Colors.grey,
-      systemNavigationBarIconBrightness: AppTheme.isLightTheme ? Brightness.dark : Brightness.light,
+      systemNavigationBarIconBrightness:
+          AppTheme.isLightTheme ? Brightness.dark : Brightness.light,
     ));
     return MaterialApp(
       key: key,
@@ -65,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   var routes = <String, WidgetBuilder>{
-    Routes.SPLASH: (BuildContext context) => SplashScreen(),
+    Routes.SPLASH: (BuildContext context) => IntroductionScreen(),
     Routes.TabScreen: (BuildContext context) => new BottomTabScreen(),
   };
 }

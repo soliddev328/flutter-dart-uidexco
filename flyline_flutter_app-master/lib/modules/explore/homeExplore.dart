@@ -13,19 +13,22 @@ import 'package:motel/modules/myTrips/favoritesListView.dart';
 class HomeExploreScreen extends StatefulWidget {
   final AnimationController animationController;
 
-  const HomeExploreScreen({Key key, this.animationController}) : super(key: key);
+  const HomeExploreScreen({Key key, this.animationController})
+      : super(key: key);
   @override
   _HomeExploreScreenState createState() => _HomeExploreScreenState();
 }
 
-class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProviderStateMixin {
+class _HomeExploreScreenState extends State<HomeExploreScreen>
+    with TickerProviderStateMixin {
   var hotelList = HotelListData.hotelList;
   ScrollController controller;
   AnimationController _animationController;
   var sliderImageHieght = 0.0;
   @override
   void initState() {
-    _animationController = AnimationController(duration: Duration(milliseconds: 0), vsync: this);
+    _animationController =
+        AnimationController(duration: Duration(milliseconds: 0), vsync: this);
     widget.animationController.forward();
     controller = ScrollController(initialScrollOffset: 0.0);
 
@@ -34,13 +37,16 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
         if (controller.offset < 0) {
           // we static set the just below half scrolling values
           _animationController.animateTo(0.0);
-        } else if (controller.offset > 0.0 && controller.offset < sliderImageHieght) {
+        } else if (controller.offset > 0.0 &&
+            controller.offset < sliderImageHieght) {
           // we need around half scrolling values
           if (controller.offset < ((sliderImageHieght / 1.5))) {
-            _animationController.animateTo((controller.offset / sliderImageHieght));
+            _animationController
+                .animateTo((controller.offset / sliderImageHieght));
           } else {
             // we static set the just above half scrolling values "around == 0.64"
-            _animationController.animateTo((sliderImageHieght / 1.5) / sliderImageHieght);
+            _animationController
+                .animateTo((sliderImageHieght / 1.5) / sliderImageHieght);
           }
         }
       }
@@ -58,7 +64,8 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
           opacity: widget.animationController,
           // FadeTransition and Transform : just for screen loading animation on fistTime
           child: new Transform(
-            transform: new Matrix4.translationValues(0.0, 40 * (1.0 - widget.animationController.value), 0.0),
+            transform: new Matrix4.translationValues(
+                0.0, 40 * (1.0 - widget.animationController.value), 0.0),
             child: Scaffold(
               backgroundColor: AppTheme.getTheme().backgroundColor,
               body: Stack(
@@ -69,7 +76,8 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                       controller: controller,
                       itemCount: 4,
                       // padding on top is only for we need spec for sider
-                      padding: EdgeInsets.only(top: sliderImageHieght + 32, bottom: 16),
+                      padding: EdgeInsets.only(
+                          top: sliderImageHieght + 32, bottom: 16),
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         // some list UI
@@ -77,7 +85,8 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                         var animation = Tween(begin: 0.0, end: 1.0).animate(
                           CurvedAnimation(
                             parent: widget.animationController,
-                            curve: Interval((1 / count) * index, 1.0, curve: Curves.fastOutSlowIn),
+                            curve: Interval((1 / count) * index, 1.0,
+                                curve: Curves.fastOutSlowIn),
                           ),
                         );
                         if (index == 0) {
@@ -104,7 +113,79 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                             animationController: widget.animationController,
                           );
                         } else {
-                          return getDealListView(index);
+                          //   return getDealListView(index);
+                          return Column(
+                            children: <Widget>[
+                              for (int i = 0; i < 5; i++)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 24, right: 24, bottom: 16),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppTheme.getTheme().backgroundColor,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(1)),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color:
+                                              AppTheme.getTheme().dividerColor,
+                                          blurRadius: 8,
+                                          offset: Offset(4, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16, right: 16),
+                                      child: Center(
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                            top: 10.0,
+                                            bottom: 10.0,
+                                          ),
+                                          height: 85,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: Text(
+                                                    'Newyork -> London, Round Trip | 02/10 - 02/12',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: Text(
+                                                    'Airlines : Norwegian, Air UK, Vueling        Cost: \$353',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppTheme.getTheme()
+                                                                .disabledColor),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
                         }
                       },
                     ),
@@ -153,7 +234,10 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
     return AnimatedBuilder(
       animation: _animationController,
       builder: (BuildContext context, Widget child) {
-        var opecity = 1.0 - (_animationController.value > 0.64 ? 1.0 : _animationController.value);
+        var opecity = 1.0 -
+            (_animationController.value > 0.64
+                ? 1.0
+                : _animationController.value);
         return Positioned(
           left: 0,
           right: 0,
@@ -188,16 +272,21 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                           if (opecity != 0) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => HotelHomeScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => HotelHomeScreen()),
                             );
                           }
                         },
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+                            padding: const EdgeInsets.only(
+                                left: 24, right: 24, top: 8, bottom: 8),
                             child: Text(
                               "View Hotels",
-                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  color: Colors.white),
                             ),
                           ),
                         ),
@@ -222,7 +311,10 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
         animation: _animationController,
         builder: (BuildContext context, Widget child) {
           // we calculate the opecity between 0.64 to 1.0
-          var opecity = 1.0 - (_animationController.value > 0.64 ? 1.0 : _animationController.value);
+          var opecity = 1.0 -
+              (_animationController.value > 0.64
+                  ? 1.0
+                  : _animationController.value);
           return SizedBox(
             height: sliderImageHieght * (1.0 - _animationController.value),
             child: HomeExploreSliderView(
@@ -299,7 +391,9 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HotelHomeScreen(), fullscreenDialog: true),
+                    MaterialPageRoute(
+                        builder: (context) => HotelHomeScreen(),
+                        fullscreenDialog: true),
                   );
                 },
                 child: Row(
@@ -332,7 +426,8 @@ class _HomeExploreScreenState extends State<HomeExploreScreen> with TickerProvid
                           errorText: null,
                           border: InputBorder.none,
                           hintText: "Where are you going?",
-                          hintStyle: TextStyle(color: AppTheme.getTheme().disabledColor),
+                          hintStyle: TextStyle(
+                              color: AppTheme.getTheme().disabledColor),
                         ),
                       ),
                     ),

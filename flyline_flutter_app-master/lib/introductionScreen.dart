@@ -22,29 +22,35 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
   void initState() {
     pageViewModelData.add(PageViewData(
       titleText: 'Stop Paying Retail',
-      subText: 'We source flights from 250+ airlines and \nsell them directly to you with zero markup.',
+      subText:
+          'We source flights from 250+ airlines and \nsell them directly to you with zero markup.',
       assetsImage: 'assets/images/introduction1.png',
     ));
 
     pageViewModelData.add(PageViewData(
       titleText: 'Save Virtual Interlining',
-      subText: 'We connect one-way flights from \ndifferent carriers to deliver the best savings.',
+      subText:
+          'We connect one-way flights from \ndifferent carriers to deliver the best savings.',
       assetsImage: 'assets/images/introduction2.png',
     ));
 
     pageViewModelData.add(PageViewData(
       titleText: 'Always the Cheapest',
-      subText: 'We will always display the cheapest \nfare, whether it is a public or FlyLine fare.',
+      subText:
+          'We will always display the cheapest \nfare, whether it is a public or FlyLine fare.',
       assetsImage: 'assets/images/introduction3.png',
     ));
 
     sliderTimer = Timer.periodic(Duration(seconds: 4), (timer) {
       if (currentShowIndex == 0) {
-        pageController.animateTo(MediaQuery.of(context).size.width, duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+        pageController.animateTo(MediaQuery.of(context).size.width,
+            duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
       } else if (currentShowIndex == 1) {
-        pageController.animateTo(MediaQuery.of(context).size.width * 2, duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+        pageController.animateTo(MediaQuery.of(context).size.width * 2,
+            duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
       } else if (currentShowIndex == 2) {
-        pageController.animateTo(0, duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+        pageController.animateTo(0,
+            duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
       }
     });
     super.initState();
@@ -91,7 +97,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               activeColor: AppTheme.getTheme().primaryColor,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 48, right: 48, bottom: 8, top: 32),
+              padding: const EdgeInsets.only(
+                  left: 48, right: 48, bottom: 8, top: 32),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -119,7 +126,10 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     child: Center(
                       child: Text(
                         "Login",
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Colors.white),
                       ),
                     ),
                   ),
@@ -127,7 +137,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 48, right: 48, bottom: 32, top: 8),
+              padding: const EdgeInsets.only(
+                  left: 48, right: 48, bottom: 32, top: 8),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -155,7 +166,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     child: Center(
                       child: Text(
                         "Start 14 Day Free Trial",
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 16),
                       ),
                     ),
                   ),

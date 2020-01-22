@@ -32,7 +32,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return FadeTransition(
           opacity: widget.animationController,
           child: new Transform(
-            transform: new Matrix4.translationValues(0.0, 40 * (1.0 - widget.animationController.value), 0.0),
+            transform: new Matrix4.translationValues(
+                0.0, 40 * (1.0 - widget.animationController.value), 0.0),
             child: Scaffold(
               backgroundColor: AppTheme.getTheme().backgroundColor,
               body: Column(
@@ -40,7 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top),
                     child: Container(child: appBar()),
                   ),
                   Expanded(
@@ -51,33 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            if (index == 5) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SettingsScreen(),
-                                    fullscreenDialog: true,
-                                  ));
-                            }
-                            if (index == 3) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HeplCenterScreen(),
-                                  fullscreenDialog: true,
-                                ),
-                              );
-                            }
                             if (index == 0) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChangepasswordScreen(),
-                                  fullscreenDialog: true,
-                                ),
-                              );
-                            }
-                            if (index == 1) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -86,11 +62,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               );
                             }
+                            if (index == 1) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HeplCenterScreen(),
+                                  fullscreenDialog: true,
+                                ),
+                              );
+                            }
+                            if (index == 2) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SettingsScreen(),
+                                    fullscreenDialog: true,
+                                  ));
+                            }
+
+                            // if (index == 0) {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => ChangepasswordScreen(),
+                            //       fullscreenDialog: true,
+                            //     ),
+                            //   );
+                            // }
                           },
                           child: Column(
                             children: <Widget>[
                               Padding(
-                                padding: const EdgeInsets.only(left: 8, right: 16),
+                                padding:
+                                    const EdgeInsets.only(left: 8, right: 16),
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(
@@ -98,22 +102,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         padding: const EdgeInsets.all(16.0),
                                         child: Text(
                                           userSettingsList[index].titleTxt,
-                                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16),
                                         ),
                                       ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(16),
                                       child: Container(
-                                        child:
-                                            Icon(userSettingsList[index].iconData, color: AppTheme.getTheme().disabledColor.withOpacity(0.3)),
+                                        child: Icon(
+                                            userSettingsList[index].iconData,
+                                            color: AppTheme.getTheme()
+                                                .disabledColor
+                                                .withOpacity(0.3)),
                                       ),
                                     )
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 16, right: 16),
+                                padding:
+                                    const EdgeInsets.only(left: 16, right: 16),
                                 child: Divider(
                                   height: 1,
                                 ),
@@ -163,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   Text(
-                    "View and edit profile",
+                    "View and edit traveler info",
                     style: new TextStyle(
                       fontSize: 18,
                       color: AppTheme.getTheme().disabledColor,
