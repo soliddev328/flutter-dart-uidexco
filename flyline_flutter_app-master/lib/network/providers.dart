@@ -1,18 +1,17 @@
 
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'dart:async';
+import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:motel/models/locations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FlyLineProvider {
+
+  final baseUrl = "https://staging.joinflyline.com";
   
   Future<String> login(email, password) async {
-    var url = "https://staging.joinflyline.com/api/auth/login/";
+    var url = "$baseUrl/api/auth/login/";
     var result = "";
 
     Response response;
@@ -27,10 +26,6 @@ class FlyLineProvider {
     try {
       response = await dio.post(
         url,
-
-        options: Options(
-        
-      ),
         data: json.encode({})
       );
     } on DioError catch (e) {
@@ -43,14 +38,38 @@ class FlyLineProvider {
     if (response != null && response.statusCode == 200) {
       result = response.toString();
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      //prefs.setString('user_id', response.data["id"]);
+      prefs.setString('token', response.data["token"]);
 
     } else {
-      print("noothing");
-      print (response);
       result = "";
     }
     return result;
+  }
+  
+  Future<List<LocationObject>> locationQuery(term) async {
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token') ?? "";
+
+    Response response;
+    Dio dio =  Dio();
+    dio.options.headers["Authorization"] = "Token $token";
+
+    List<LocationObject> locations = List<LocationObject>();
+
+    try {
+        response = await dio.get("$baseUrl/api/locations/query/?term=$term");
+      } catch (e) {
+        log(e.toString());
+      }
+
+    if(response != null && response.statusCode == 200) {
+      
+      for (dynamic i in response.data["locations"]) {
+        locations.add(LocationObject.fromJson(i));
+        }
+    }
+    return locations;
   }
 
 }

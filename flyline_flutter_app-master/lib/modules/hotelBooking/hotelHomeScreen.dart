@@ -1,14 +1,19 @@
+import 'dart:developer';
 import 'dart:ui';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:motel/appTheme.dart';
 import 'package:motel/models/hotelListData.dart';
+import 'package:motel/models/locations.dart';
 import 'package:motel/modules/hotelBooking/calendarPopupView.dart';
 import 'package:motel/modules/hotelBooking/roomPopupView.dart';
 import 'package:motel/modules/hotelDetailes/roomBookingScreen.dart';
 import 'package:motel/modules/hotelDetailes/searchScreen.dart';
 import 'package:motel/modules/myTrips/upcomingListView.dart';
+import 'package:motel/network/blocs.dart';
+import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'filtersScreen.dart';
 // coded by Victor
@@ -31,10 +36,22 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
   DateTime endDate = DateTime.now().add(Duration(days: 5));
   bool isMap = false;
 
+
+  List<LocationObject> departureLocations = List<LocationObject>();
+  LocationObject selectedDeparture;
+  List<LocationObject> arrivalLocations = List<LocationObject>();
+  LocationObject selectedArrival;
+
   final searchBarHieght = 158.0;
   final filterBarHieght = 52.0;
+
+
+
   @override
   void initState() {
+
+
+
     animationController = AnimationController(duration: Duration(milliseconds: 1000), vsync: this);
     _animationController = AnimationController(duration: Duration(milliseconds: 0), vsync: this);
     scrollController.addListener(() {
@@ -55,6 +72,12 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
   Future<bool> getData() async {
     await Future.delayed(const Duration(milliseconds: 200));
     return true;
+  }
+
+  searchForLocation(query, isDeparture) async {
+    flyLinebloc.locationItems.add(List<LocationObject>());
+    flyLinebloc.locationQuery(query);
+    //flyLinebloc.locationItems.stream.listen((data) => onUpdateResult(data, isDeparture));
   }
 
   @override
@@ -599,36 +622,36 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 color: Colors.white,
                 fontSize: 19.0 , fontWeight: FontWeight.bold)),
             onPressed: () {
-              $fly_from='city:DFW';
-              $fly_to='city:LAS';
-              $date_from='24%2F01%2F2020';
-              $date_to='24%2F01%2F2020';
-              $type='round';
-              $return_from='26%2F01%2F2020';
-              $return_to='26%2F01%2F2020';
-              $adults=1;
-              $infants=0;
-              $hildren=0;
-              $selected_cabins='M';
-              $curr='USD';
-              $url = 'http://staging.joinflyline.com/api/search/?' 
-                + 'fly_from=' + $fly_from 
-                + '&fly_to=' + $fly_to 
-                + '&date_from=' + $date_from 
-                + '&date_to=' +  $date_to 
-                + '&type=' +   $type 
-                + '&return_from=' +   $return_from 
-                + '&return_to=' +  $return_to 
-                + '&adults=' +  $adults 
-                + '&infants=' +  $infants 
-                + '&children=' +  $hildren 
-                + '&selected_cabins=' +  $selected_cabins
-                + '&curr=' +  $curr;
-              HttpClient()
-                .getUrl(Uri.parse($url)) // produces a request object
-                .then((request) => request.close()) // sends the request
-                .then((response) =>
-                  response.transform(Utf8Decoder()).listen(print)); // transforms and prints the response
+              // $fly_from='city:DFW';
+              // $fly_to='city:LAS';
+              // $date_from='24%2F01%2F2020';
+              // $date_to='24%2F01%2F2020';
+              // $type='round';
+              // $return_from='26%2F01%2F2020';
+              // $return_to='26%2F01%2F2020';
+              // $adults=1;
+              // $infants=0;
+              // $hildren=0;
+              // $selected_cabins='M';
+              // $curr='USD';
+              // $url = 'http://staging.joinflyline.com/api/search/?' 
+              //   + 'fly_from=' + $fly_from 
+              //   + '&fly_to=' + $fly_to 
+              //   + '&date_from=' + $date_from 
+              //   + '&date_to=' +  $date_to 
+              //   + '&type=' +   $type 
+              //   + '&return_from=' +   $return_from 
+              //   + '&return_to=' +  $return_to 
+              //   + '&adults=' +  $adults 
+              //   + '&infants=' +  $infants 
+              //   + '&children=' +  $hildren 
+              //   + '&selected_cabins=' +  $selected_cabins
+              //   + '&curr=' +  $curr;
+              // HttpClient()
+              //   .getUrl(Uri.parse($url)) // produces a request object
+              //   .then((request) => request.close()) // sends the request
+              //   .then((response) =>
+              //     response.transform(Utf8Decoder()).listen(print)); // transforms and prints the response
             },
           ),
         ],
@@ -970,27 +993,8 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
             child: Container(                   
                   width: MediaQuery.of(context).size.width/4,
                   padding: EdgeInsets.only(left: 10),
-                    child: TextField(
-                      textAlign: TextAlign.start,
-                      onChanged: (String txt) {},
-                      onTap: () {
-                        // FocusScope.of(context).requestFocus(FocusNode());
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => SearchScreen(), fullscreenDialog: true),
-                        // );
-                      },
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600
-                      ),
-                      cursorColor: AppTheme.getTheme().primaryColor,
-                      decoration: new InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Departure City or Airport",
-                      ),
-                    ),
-                  ),
+                    child: LocationSearchUI("Departure", true, notifyParent: refreshDepartureValue),
+              ),
             ),
 
             Container(
@@ -1005,26 +1009,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
             child: Container(                   
                   width: MediaQuery.of(context).size.width/4,
                   padding: EdgeInsets.only(left: 10),
-                    child: TextField(
-                      textAlign: TextAlign.start,
-                      onChanged: (String txt) {},
-                      onTap: () {
-                        // FocusScope.of(context).requestFocus(FocusNode());
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => SearchScreen(), fullscreenDialog: true),
-                        // );
-                      },
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600
-                      ),
-                      cursorColor: AppTheme.getTheme().primaryColor,
-                      decoration: new InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Arrival City or Airport",
-                      ),
-                    ),
+                    child: LocationSearchUI("Arrival", true, notifyParent: refreshDepartureValue),
                   ),
             ),
       
@@ -1033,7 +1018,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
         
   }
 
-  
   Widget getFilterBarUI() {
     return Stack(
       children: <Widget>[
@@ -1192,6 +1176,75 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
       ),
     );
   }
+
+  refreshDepartureValue(value, isDeparture) {
+    if(this.mounted) setState(() {
+      if (isDeparture) selectedDeparture = value;
+      else selectedArrival = value;
+    });
+    }
+}
+
+
+class LocationSearchUI extends StatefulWidget {
+
+  final Function(LocationObject value, bool type) notifyParent;
+  final title;
+  final isDeparture;
+
+  LocationSearchUI(this.title, this.isDeparture, {Key key, @required this.notifyParent}) : super(key: key);
+
+
+  @override
+  _LocationSearchUIState createState() => _LocationSearchUIState(title);
+}
+
+  
+  class _LocationSearchUIState extends State<LocationSearchUI> with TickerProviderStateMixin {
+    
+    var title;
+  
+    _LocationSearchUIState(var item){
+      this.title = title;
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return SimpleAutocompleteFormField<LocationObject>(
+                        itemToString: (location) => location != null ? location.code: "",
+                        textAlign: TextAlign.start,
+                        itemBuilder: (context, location) => Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(location.name,
+                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text(location.code)
+                              ]),
+                        ),
+                    onSearch: (search) async {
+                        if(search.length > 0){
+                          var response = flyLinebloc.locationQuery(search);
+                          return response;
+                        }else return null;
+                        
+                      
+                    },
+                    onChanged: (value) =>  widget.notifyParent(value, widget.isDeparture),
+                    onSaved: (value) => widget.notifyParent(value, widget.isDeparture),
+                    validator: (location) => location.name == null ? 'Invalid location.' : null,
+
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600
+                    ),
+                    decoration: new InputDecoration(
+                      border: InputBorder.none,
+                      hintText: widget.title+" City or Airport",
+                    ),
+                  );
+    }
 }
 
 

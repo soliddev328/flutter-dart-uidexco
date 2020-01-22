@@ -1,3 +1,5 @@
+import 'package:motel/models/locations.dart';
+
 import 'providers.dart';
 import 'dart:async';
 
@@ -8,6 +10,10 @@ class FlyLineRepository {
 
   Future<String> login(email, password){
     return _flyLineProvider.login(email, password);
+  }
+
+  Future<List<LocationObject>> locationQuery(term){
+    return _flyLineProvider.locationQuery(term);
   }
 
 }
