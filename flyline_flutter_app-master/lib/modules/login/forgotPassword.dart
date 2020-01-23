@@ -162,6 +162,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     if(statusCode==200){
 //                                      Navigator.pop(context);
                                       return Alert(context:context,title: "Please check your email, we have sent you instructions to reset your password",
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text(
+                                              "OKAY",
+                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                            ),
+                                            onPressed: () { Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            },
+                                            width: 120,
+                                          ),
+                                        ],
 
 
 
@@ -170,10 +182,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                                     }
                                     else if (response.statusCode==500){
-                                      return Alert(context:context,title: "something went wrong, try again later", ).show();
+                                      return Alert(context:context,title: "something went wrong, try again later",
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text(
+                                              "OKAY",
+                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                            ),
+                                            onPressed: () { Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            },
+
+                                            width: 120,
+                                          ),
+                                        ],).show();
                                     }
                                     else{
-                                      return Alert(context: context,title:"Email doesn't exist ",).show();
+                                      return Alert(context: context,title:"Email doesn't exist ",
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text(
+                                              "OKAY",
+                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                            ),
+                                            onPressed: () { Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            },
+                                            width: 120,
+                                          ),
+                                        ],).show();
                                     }
 
 //
