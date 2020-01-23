@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:motel/appTheme.dart';
@@ -11,25 +13,16 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController email_text_controller = new TextEditingController();
   GlobalKey<FormState> form_key = new GlobalKey();
-  bool success=false;
+  var response;
+  int statusCode;
 
   Future<dynamic> forgot_password_api_call() async {
     String url =
         'https://staging.joinflyline.com/api/password_reset/'; // here i am checking with my own api
-    var response =
+    response =
         await http.post(url, body: {"email": email_text_controller.text});
+    statusCode=response.statusCode;
 
-    if(response.statusCode==200){
-      success=true;
-
-    }
-    else{
-      setState(() {
-        success = false;
-
-      }
-      );
-    }
 
     //this is output i got
 
@@ -166,15 +159,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 onTap: () async {
                                   if (form_key.currentState.validate()) {
                                     await forgot_password_api_call();
-                                    if(success==false)
-                                     return
-                                     Alert(context: context,title:"something went wrong !",style:AlertStyle(
-                                       titleStyle: TextStyle(fontSize: 16),
-                                     ) ).show();
-                                    else
-                                     Navigator.pop(context);
-                                  }
-                                },
+                                    if(statusCode==200){
+//                                      Navigator.pop(context);
+                                      return Alert(context:context,title: "Please check your email, we have sent you instructions to reset your password",
+
+
+
+                                       ).show();
+
+
+                                    }
+                                    else if (response.statusCode==500){
+                                      return Alert(context:context,title: "something went wrong, try again later", ).show();
+                                    }
+                                    else{
+                                      return Alert(context: context,title:"Email doesn't exist ",).show();
+                                    }
+
+//
+
+                                }},
 
                                 child: Center(
                                   child: Text(
