@@ -680,7 +680,8 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                   "0",
                   "0",
                   selectedClassOfServiceValue,
-                  "USD");
+                  "USD",
+                  "5");
                   }catch (e){
                     print(e);
                   }

@@ -94,7 +94,7 @@ class FlyLineProvider {
     return locations;
   }
 
-  Future<List<FlightInformationObject>> searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr) async {
+  Future<List<FlightInformationObject>> searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr, limit) async {
     
    var token = await getAuthToken();
 
@@ -103,7 +103,7 @@ class FlyLineProvider {
     dio.options.headers["Authorization"] = "Token $token";
 
     List<FlightInformationObject> flights = List<FlightInformationObject>();
-    var url ="$baseUrl/api/search/?fly_from=$flyFrom&fly_to=$flyTo&date_from=$dateFrom&date_to=$dateTo&type=$type&return_from=$returnFrom&return_to=$returnTo&adults=$adults&infants=$infants&children=$children&selected_cabins=$selectedCabins&curr=USD";
+    var url ="$baseUrl/api/search/?fly_from=$flyFrom&fly_to=$flyTo&date_from=$dateFrom&date_to=$dateTo&type=$type&return_from=$returnFrom&return_to=$returnTo&adults=$adults&infants=$infants&children=$children&selected_cabins=$selectedCabins&curr=USD&limit=$limit";
   
     try {
         response = await dio.get(url);
