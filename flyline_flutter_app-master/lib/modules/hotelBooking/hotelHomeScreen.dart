@@ -412,11 +412,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
                                                           Container(
                                                             margin: EdgeInsets.only(left : 10, right: 5),
-                                                            child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                            child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[0].airline}.png', width: 20.0, height: 20.0),),
 
                                                           Container(
                                                             margin: EdgeInsets.only(left : 5, right: 5),
-                                                            child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                            child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[0].airline}.png', width: 20.0, height: 20.0),),
                                                           
                                                           
                                                           // Container(     
@@ -561,11 +561,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
                                               Container(
                                                 margin: EdgeInsets.only(left : 10, right: 5),
-                                                child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[1].airline}.png', width: 20.0, height: 20.0),),
 
                                               Container(
                                                 margin: EdgeInsets.only(left : 5, right: 5),
-                                                child: Icon(Icons.favorite, color: Colors.red, size: 14,)),
+                                                child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[1].airline}.png', width: 20.0, height: 20.0),),
                                               
                                               
                                               // Container(     
