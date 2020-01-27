@@ -177,6 +177,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
           ),
         ],
       ),
+      resizeToAvoidBottomPadding: false,
     );
   }
 
