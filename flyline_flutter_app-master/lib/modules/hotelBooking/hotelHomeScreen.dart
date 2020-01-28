@@ -331,7 +331,10 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                   itemBuilder: (context, index) {
                     var flight = list_of_flights[index];
 
+                    // TODO: remove after debugging
+                    print("");
                     print(flight);
+                    print("");
                     print(flight.routes);
 
                     // initialize
@@ -612,7 +615,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
                                                   Container(
                                                     margin: EdgeInsets.only(left : 5, right: 5),
-                                                    child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[1].airline}.png', width: 20.0, height: 20.0),),
+                                                    child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes.last.airline}.png', width: 20.0, height: 20.0),),
 
 
                                                   Container(
@@ -656,7 +659,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                 padding: EdgeInsets.only(left:10, top:20),
                                                 margin: EdgeInsets.only(bottom:3),
                                                 width: MediaQuery.of(context).size.width/2,
-                                                child: Text(formatTime.format(flight.routes[1].localArrival)+" "+ flight.routes[1].flyTo+" ("+ flight.routes[1].cityTo +")",
+                                                child: Text(formatTime.format(flight.routes.last.localArrival)+" "+ flight.routes.last.flyTo+" ("+ flight.routes.last.cityTo +")",
                                                   textAlign: TextAlign.start,
                                                   style: TextStyle(
                                                       fontSize: 14,

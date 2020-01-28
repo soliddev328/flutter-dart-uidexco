@@ -51,6 +51,12 @@ class FlightInformationObject {
     
   }
 
+  @override
+  String toString() {
+    return 'FlightInformationObject{flyFrom: $flyFrom, flyTo: $flyTo, cityFrom: $cityFrom, cityTo: $cityTo, nightsInDest: $nightsInDest, routes: $routes, localArrival: $localArrival, localDeparture: $localDeparture, durationDeparture: $durationDeparture, durationReturn: $durationReturn}';
+  }
+
+
 }
 
 
@@ -86,5 +92,11 @@ class FlightRouteObject {
     return FlightRouteObject(json['flyFrom'], json["flyTo"], json['cityFrom'], json['cityTo'], json["flight_no"], parsedArrivalDate, parsedDepartureDate, json["airline"]);
 
   }
+
+  @override
+  String toString() {
+    return 'FlightRouteObject{cityFrom: $cityFrom, cityTo: $cityTo, flyFrom: $flyFrom, flyTo: $flyTo, flightNo: $flightNo, airline: $airline, localArrival: $localArrival, localDeparture: $localDeparture}';
+  }
+
 
 }
