@@ -31,6 +31,11 @@ class FlyLineBloc {
   }
 
   Future<List<FlightInformationObject>> searchFlight(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr, limit) async {
+
+    // return null for activate loading indicator on search page
+    // before real results will be loaded
+    _subjectFlightItems.sink.add(null);
+
     List <FlightInformationObject> response = await _repository.searchFlights(flyFrom, flyTo, dateFrom, dateTo, type, returnFrom, returnTo, adults, infants, children, selectedCabins, curr, limit);
     
     _subjectFlightItems.sink.add(response);

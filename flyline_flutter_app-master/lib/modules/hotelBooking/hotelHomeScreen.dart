@@ -313,9 +313,18 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
     return Container(
       child: StreamBuilder<List<FlightInformationObject>>(
           stream: flyLinebloc.flightsItems.stream,
+          initialData: List<FlightInformationObject>(),
           builder: (context, AsyncSnapshot <List<FlightInformationObject>> snapshot) {
             
-            if(snapshot.data!=null && snapshot.data.isNotEmpty) {
+            if(snapshot.data == null) {
+
+              return Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                )
+              );
+
+            } else if (snapshot.data.isNotEmpty) {
 
               var list_of_flights = snapshot.data;
               
@@ -337,30 +346,50 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                     print("");
                     print(flight.routes);
 
-                    // initialize
+                    // initialize flight leg
+                    // a->b
                     int a2b = 0;
+                    // b->a
                     int b2a = 0;
+
+                    // list of airlines for a->b trip
+                    List<String> a2bAirlines = List();
+
+                    // list of airlines for b->a trip
+                    List<String> b2aAirlines = List();
 
                     // get all flight routes
                     List<FlightRouteObject> routes = flight.routes;
 
+                    // a->b arrival route number
+                    int a2bArrivalRoutNumber = 0;
+
+                    // a->b arrival route number
+                    int b2aDepartureRoutNumber = routes.length - 1;
+
                     // one way
                     if (typeOfTripSelected == 1) {
 
-                      for(FlightRouteObject route in flight.routes) {
+                      for(FlightRouteObject route in routes) {
+
+                        a2bAirlines.add(route.airline);
 
                         if (route.cityTo != flight.cityTo) {
                           a2b++;
+                          a2bArrivalRoutNumber++;
                         } else {
                           break;
                         }
                       } // round trip
                     } else if (typeOfTripSelected == 0) {
 
-                      for(FlightRouteObject route in flight.routes) {
+                      for(FlightRouteObject route in routes) {
+
+                        a2bAirlines.add(route.airline);
 
                         if (route.cityTo != flight.cityTo) {
                           a2b++;
+                          a2bArrivalRoutNumber++;
                         } else {
                           break;
                         }
@@ -368,8 +397,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
 
                       for(FlightRouteObject route in flight.routes.reversed) {
 
+                        b2aAirlines.add(route.airline);
+
                         if (route.cityFrom != flight.cityTo) {
                           b2a++;
+                          b2aDepartureRoutNumber = routes.length - 1 - a2b;
                         } else {
                           break;
                         }
@@ -429,7 +461,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                         padding: EdgeInsets.only(left:10, top:5, bottom: 10),
                                                         margin: EdgeInsets.only(bottom:8),
                                                         width: MediaQuery.of(context).size.width/2,
-                                                          child: Text(formatTime.format(flight.routes[0].localDeparture)+" "+ flight.routes[0].flyFrom+" ("+ flight.routes[0].cityFrom +")",
+                                                          child: Text(formatTime.format(flight.routes.first.localDeparture)+" "+ flight.routes.first.flyFrom+" ("+ flight.routes.first.cityFrom +")",
                                                             textAlign: TextAlign.start,
                                                             style: TextStyle(
                                                               fontSize: 14,
@@ -454,13 +486,10 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                               ),
                                                             ),
 
+                                                          for ( var airline in a2bAirlines )
                                                           Container(
                                                             margin: EdgeInsets.only(left : 10, right: 5),
-                                                            child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[0].airline}.png', width: 20.0, height: 20.0),),
-
-                                                          Container(
-                                                            margin: EdgeInsets.only(left : 5, right: 5),
-                                                            child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[0].airline}.png', width: 20.0, height: 20.0),),
+                                                            child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/$airline.png', width: 20.0, height: 20.0),),
 
                                                            Container(
                                                              margin: EdgeInsets.only(left: 5),
@@ -503,7 +532,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                         padding: EdgeInsets.only(left:10, top:20),
                                                         margin: EdgeInsets.only(bottom:3),
                                                         width: MediaQuery.of(context).size.width/2,
-                                                          child: Text(formatTime.format(flight.routes[0].localArrival)+" "+ flight.routes[0].flyTo+" ("+ flight.routes[0].cityTo +")",
+                                                          child: Text(formatTime.format(flight.routes[a2bArrivalRoutNumber].localArrival)+" "+ flight.routes[a2bArrivalRoutNumber].flyTo+" ("+ flight.routes[a2bArrivalRoutNumber].cityTo +")",
                                                             textAlign: TextAlign.start,
                                                             style: TextStyle(
                                                               fontSize: 14,
@@ -584,7 +613,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                 padding: EdgeInsets.only(left:10, top:5, bottom: 10),
                                                 margin: EdgeInsets.only(bottom:8),
                                                 width: MediaQuery.of(context).size.width/2,
-                                                child: Text(formatTime.format(flight.routes[1].localDeparture)+" "+ flight.routes[1].flyFrom+" ("+ flight.routes[1].cityFrom +")",
+                                                child: Text(formatTime.format(flight.routes[b2aDepartureRoutNumber].localDeparture)+" "+ flight.routes[b2aDepartureRoutNumber].flyFrom+" ("+ flight.routes[b2aDepartureRoutNumber].cityFrom +")",
                                                   textAlign: TextAlign.start,
                                                   style: TextStyle(
                                                       fontSize: 14,
@@ -609,14 +638,10 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                                                     ),
                                                   ),
 
-                                                  Container(
-                                                    margin: EdgeInsets.only(left : 10, right: 5),
-                                                    child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes[1].airline}.png', width: 20.0, height: 20.0),),
-
-                                                  Container(
-                                                    margin: EdgeInsets.only(left : 5, right: 5),
-                                                    child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/${flight.routes.last.airline}.png', width: 20.0, height: 20.0),),
-
+                                                  for ( var airline in b2aAirlines )
+                                                    Container(
+                                                      margin: EdgeInsets.only(left : 10, right: 5),
+                                                      child: Image.network('https://storage.googleapis.com/joinflyline/images/airlines/$airline.png', width: 20.0, height: 20.0),),
 
                                                   Container(
                                                     margin: EdgeInsets.only(left: 5),
@@ -700,7 +725,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> with TickerProviderSt
                 ),
               );
 
-            }else{
+            } else {
               return Container();
             }
 
